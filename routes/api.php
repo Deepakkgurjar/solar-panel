@@ -19,6 +19,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('register-user','HomeController@registerUser');
 
+Route::post('verify-mobile','HomeController@verifyUserMob');
+
+Route::post('verify-mobile-otp','HomeController@verifyMobileOTP');
+
 Route::post('login-user','HomeController@loginUser');
 
 Route::post('forgot-password','HomeController@forgotPassword');
@@ -46,4 +50,12 @@ Route::post('order-summary','Order\OrderController@orderSummary')->middleware('a
 Route::post('order-feedback','Order\OrderController@orderFeedback')->middleware('auth:api');
 
 Route::post('plant-profile','Profile\PlantProfileController@plantProfile')->middleware('auth:api');
+
+Route::post('view-plant-profile','Profile\PlantProfileController@viewPlantProfile')->middleware('auth:api');
+
+Route::post('view-user-profile','Profile\ProfileController@viewUserProfile')->middleware('auth:api');
+
+Route::post('time-slots','Order\OrderController@getTimesSloats');
+
+Route::post('save-order-status','Package\PackageController@saveOrderStatus')->middleware('auth:api');
 

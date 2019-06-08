@@ -7,34 +7,34 @@
             <div class="col-md-6">
               <div class="card card-plain">
                 <div class="card-header card-header-primary">
-                  <h4 class="card-title mt-0">Edit Package</h4>
-                  <p class="card-category"> Here you can update package details</p>
+                  <h4 class="card-title mt-0">Add Package</h4>
+                  <p class="card-category"> Here you can add more packages in your list </p>
                 </div>
                 <div class="card-body">
-                  <form action="{{route('update-package')}}" method="post">
+                  <form action="{{route('save-package')}}" method="post">
                     {{csrf_field()}}
-                    <input type="hidden" name="id" id="id" value="@if(!empty($packageDetail)) {{$packageDetail->id}} @endif">
+                    
                     <div class="form-group"> <!-- left unspecified, .bmd-form-group will be automatically added (inspect the code) -->
                       <label for="formGroupExampleInput" class="bmd-label-floating">Package Name</label>
-                      <input type="text" class="form-control" id="packageName" name="packageName" value="@if(!empty($packageDetail)) {{$packageDetail->package_name}} @else -- @endif">
+                      <input type="text" class="form-control" id="packageName" name="packageName">
                     </div>
                     <div class="form-group"> <!-- manually specified --> 
                       <label for="formGroupExampleInput" class="bmd-label-floating">Package Type</label>
-                      <input type="text" class="form-control" id="packageType" name="packageType" value="@if(!empty($packageDetail)) {{$packageDetail->package_type}} @else -- @endif">
+                      <input type="text" class="form-control" id="packageType" name="packageType">
                     </div>
                     <div class="form-group"> <!-- manually specified --> 
                       <label for="formGroupExampleInput" class="bmd-label-floating">Panel Capacity</label>
-                      <input type="text" class="form-control" id="panelCapacity" name="panelCapacity" value="@if(!empty($packageDetail)) {{$packageDetail->panel_capacity}} @else -- @endif">
+                      <input type="text" class="form-control" id="panelCapacity" name="panelCapacity">
                     </div>
                     <div class="form-group"> <!-- manually specified --> 
                       <label for="formGroupExampleInput" class="bmd-label-floating">Prize</label>
-                      <input type="text" class="form-control" id="prize" name="prize" value="@if(!empty($packageDetail)) {{$packageDetail->prize}} @else -- @endif">
+                      <input type="text" class="form-control" id="prize" name="prize">
                     </div>
                     <div>
 
                     <div class="form-group"> <!-- manually specified --> 
                       <label for="formGroupExampleInput" class="bmd-label-floating">GST</label>&nbsp;&nbsp;
-                      <label>@if(!empty($packageDetail)) {{$packageDetail->gst}} @else <?php echo 'nill';?> @endif</label>
+                      
                       
                       <select class="form-control" id="gst" name="gst" style="width: 50px;">
                         <option value="18%">18%</option>

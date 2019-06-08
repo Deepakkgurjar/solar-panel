@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Packages;
 use App\PackageOrders;
+use App\VerifiedUser;
 
 
 class HomeController extends Controller
@@ -32,7 +33,7 @@ class HomeController extends Controller
         if($validator->fails()){
             $response['return'] = false;
             $response['message']="errors";
-            $response['errors']=$validator->errors()->toArray();
+            $response['error']=$validator->errors()->toArray();
             $response['error_key']=array_keys($validator->errors()->toArray());
             return response()->json($response,422);
         }else{
@@ -41,6 +42,7 @@ class HomeController extends Controller
             $userRegister->mobile_no=$request->mobile;
             $userRegister->password=bcrypt($request->password);
             $userRegister->api_token= sha1(time());
+            $userRegister->verified='n';
             $userRegister->time=time();
             $userRegister->save();
         }
@@ -49,6 +51,96 @@ class HomeController extends Controller
             $response['message']="$userRegister->name Sucessfully register";
             $response['userdata']=$userRegister;
             return response()->json($response,200);
+        }
+    }
+
+    public function verifyUserMob(Request $request)
+    {
+        $rules=[
+            'mobile'=>'required|min:11|numeric',
+            
+        ];
+        $message=[
+            'mobile.required'=>'Mobile no field is required',
+            
+        ];
+        $validation=Validator::make($request->all(),$rules,$message);
+        if($validation->fails()){
+            $response['return'] = false;
+            $response['message']="errors";
+            $response['error']=$validation->errors()->toArray();
+            $response['error_key']=array_keys($validation->errors()->toArray());
+            return response()->json($response,422);
+        }else{
+
+            $alreadyhaveotp=VerifiedUser::where('mobile',$request->mobile)->first();
+            if (!empty($alreadyhaveotp)){
+                VerifiedUser::where('mobile',$request->mobile)->delete();
+            }
+            $num_str = sprintf("%04d", mt_rand(1, 9999));
+            $otpSave=new VerifiedUser();
+            $otpSave->mobile=$request->mobile;
+            $otpSave->otp=$num_str;
+            $otpSave->time=time();
+            $otpSave->save();
+
+            $message='Your OTP is '.$num_str.'. Keep it confidential.';
+            $number= $request->mobile;
+            sendMessages($message,$number);
+
+            $response['return']=true;
+            $response['message']='OTP has been send sucessfully';
+            return response()->json($response,200);
+
+        }
+    }
+
+    public function verifyMobileOTP(Request $request)
+    {
+        $rules=[
+            'otp'=>'required|numeric',
+            'mobile'=>'required|min:10|numeric',
+            
+        ];
+        $message=[
+            'otp.required'=>'OTP field is required',
+           'mobile.required'=>'Mobile number field is required',
+            
+        ];
+        $validation=Validator::make($request->all(),$rules,$message);
+        if($validation->fails()){
+            $response['return']=false;
+            $response['message']='errors';
+            $response['error']=$validation->errors()->toArray();
+            $response['error_key']=array_keys($validation->errors()->toArray());
+            return response()->json($response,422);
+        }else{
+            $checkOTP=VerifiedUser::orderby('id','desc')->where('mobile',$request->mobile)->first();
+            // dd($checkOTP);
+            if ($checkOTP== null){
+                $response['return']=false;
+                $response['message']="errors";
+                $response['error']=['mobile' => ['Mobile no not match']];
+                $response['error_key']=['mobile'];
+                return response()->json($response,400);
+            }
+
+            if(!empty($checkOTP) &&  $checkOTP->otp == $request->otp){
+
+                $data=[
+                    'verified'=>'y'
+                ];
+                User::where('mobile_no',$request->mobile)->update($data);
+                $response['return']=true;
+                $response['message']='otp  sucessfully match';
+                return response()->json($response,200);
+            }else{
+                $response['return']=false;
+                $response['message']="errors";
+                $response['error']=['otp' => ['Incorrect OTP']];
+                $response['error_key']=['otp'];
+                return response()->json($response,400);
+            }
         }
     }
 
@@ -66,7 +158,7 @@ class HomeController extends Controller
         if($validation->fails()){
             $response['return'] = false;
             $response['message']="errors";
-            $response['errors']=$validation->errors()->toArray();
+            $response['error']=$validation->errors()->toArray();
             $response['error_key']=array_keys($validation->errors()->toArray());
             return response()->json($response,422);
         }else{
@@ -74,7 +166,7 @@ class HomeController extends Controller
             if(empty($getUser)){
                     $response['return'] = false;
                     $response['message']="errors";
-                    $response['errors']=['mobile' => ['Invalid mobile no']];
+                    $response['error']=['mobile' => ['Invalid mobile no']];
                     $response['error_key']=['mobile'];
                     return response()->json($response, 400);
             }
@@ -86,7 +178,7 @@ class HomeController extends Controller
                 }else{
                     $response['return'] = false;
                     $response['message']="errors";
-                    $response['errors']=['password' => ['Please confirm your password']];
+                    $response['error']=['password' => ['Please confirm your password']];
                     $response['error_key']=['password'];
 
                     return response()->json($response, 400);
@@ -109,18 +201,15 @@ class HomeController extends Controller
         if($validation->fails()){
             $response['return']=false;
             $response['message']='errors';
-            $response['errors']=$validation->errors()->toArray();
+            $response['error']=$validation->errors()->toArray();
             $response['error_key']=array_keys($validation->errors()->toArray());
             return response()->json($response,422);
         }else{
             $getUser=User::where('mobile_no',$request->mobile)->first();
-
-
-
             if(empty($getUser)){
                 $response['return']=false;
                 $response['message']="errors";
-                $response['errors']=['mobile' => ['Incorrect Mobile number']];
+                $response['error']=['mobile' => ['Incorrect Mobile number']];
                 $response['error_key']=['mobile'];
                 
                 return response()->json($response,400);
@@ -167,7 +256,7 @@ class HomeController extends Controller
         if($validation->fails()){
             $response['return']=false;
             $response['message']='errors';
-            $response['errors']=$validation->errors()->toArray();
+            $response['error']=$validation->errors()->toArray();
             $response['error_key']=array_keys($validation->errors()->toArray());
             return response()->json($response,422);
         }else{
@@ -176,7 +265,7 @@ class HomeController extends Controller
             if ($checkOTP== null){
                 $response['return']=false;
                 $response['message']="errors";
-                $response['errors']=['mobile' => ['Mobile no not match']];
+                $response['error']=['mobile' => ['Mobile no not match']];
                 $response['error_key']=['mobile'];
                 return response()->json($response,400);
             }
@@ -188,7 +277,7 @@ class HomeController extends Controller
             }else{
                 $response['return']=false;
                 $response['message']="errors";
-                $response['errors']=['otp' => ['Incorrect OTP']];
+                $response['error']=['otp' => ['Incorrect OTP']];
                 $response['error_key']=['otp'];
                 return response()->json($response,400);
             }
@@ -213,7 +302,7 @@ class HomeController extends Controller
         if($validation->fails()){
             $response['return']=false;
             $response['message']='errors';
-            $response['errors']=$validation->errors()->toArray();
+            $response['error']=$validation->errors()->toArray();
             $response['error_key']=array_keys($validation->errors()->toArray());
             return response()->json($response,422);
         }else{
@@ -222,7 +311,7 @@ class HomeController extends Controller
             if ($checkOTP== null){
                 $response['return']=false;
                 $response['message']="errors";
-                $response['errors']=['mobile' => ['Mobile no not match']];
+                $response['error']=['mobile' => ['Mobile no not match']];
                 $response['error_key']=['mobile'];
                 return response()->json($response,400);
             }
@@ -240,7 +329,7 @@ class HomeController extends Controller
             }else{
                 $response['return']=false;
                 $response['message']="errors";
-                $response['errors']=['otp' => ['Something went wrong']];
+                $response['error']=['otp' => ['Something went wrong']];
                 $response['error_key']=['otp'];
                 return response()->json($response,400);
             }

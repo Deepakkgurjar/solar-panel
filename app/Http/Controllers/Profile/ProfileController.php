@@ -16,10 +16,10 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         $rules=[
-            'first_name'=>'required|string|max:15'
+            'full_name'=>'required|string|max:15'
         ];
         $message=[
-            'first_name.required'=>'First name field required'
+            'full_name.required'=>'Full name field required'
         ];
 
         $validation = Validator::make($request->all(), $rules);
@@ -33,7 +33,7 @@ class ProfileController extends Controller
             }else{
 
                 $data=[
-                    'full_name'=>$request->first_name,
+                    'full_name'=>$request->full_name,
                 ];
                 User::where('mobile_no',$user->mobile_no)->update($data);
             }
@@ -60,10 +60,6 @@ class ProfileController extends Controller
                 ];
                 User::where('mobile_no',$user->mobile_no)->update($data);
 
-                $response['return']=true;
-                $response['message']='Sucessfully update';
-                $response['data']=$user;
-                return response()->json($response,200);
             }
         }
 
@@ -169,9 +165,6 @@ class ProfileController extends Controller
                 User::where('mobile_no',$user->mobile_no)->update($data);
                 
             }
-
-
-
         }
         $id=Auth::user()->id;
         $data=User::where('id',$id)->first();
@@ -222,5 +215,39 @@ class ProfileController extends Controller
                 return response()->json($response,200);
 
             }
+    }
+
+    public function viewUserProfile(Request $request)
+    {
+        $user = Auth::user();
+        $UserProfile=User::where('id',$user->id)->first();
+        $add=explode(',', $UserProfile->address);
+        if(!empty($UserProfile->address)){
+            $UserProfile['house_no']=$add[0];
+            $UserProfile['block_no']=$add[1];
+            $UserProfile['lane']=$add[2];
+            $UserProfile['land_mark']=$add[3];
+            $UserProfile['city']=$add[4];
+            $UserProfile['state']=$add[5];
+        }else{
+            $UserProfile['house_no']=$add[0]=NULL;
+            $UserProfile['block_no']=$add[1]=NULL;
+            $UserProfile['lane']=$add[2]=NULL;
+            $UserProfile['land_mark']=$add[3]=NULL;
+            $UserProfile['city']=$add[4]=NULL;
+            $UserProfile['state']=$add[5]=NULL;
+        }
+        // dd($add[0]);
+
+        if(empty($UserProfile)){
+            $response['return']=true;
+            $response['message']='User profile not found';
+            $response['data']=$UserProfile=NULL;
+            return response()->json($response,200);
+        }
+        $response['return']=true;
+        $response['message']='User Profile Data';
+        $response['data']=$UserProfile;
+        return response()->json($response,200);
     }
 }

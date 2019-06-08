@@ -41,9 +41,8 @@
                   </p>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
-                  <a class="dropdown-item" href="#">Profile</a>
-                  <a class="dropdown-item" href="#">Settings</a>
-                  <div class="dropdown-divider"></div>
+                 
+                 
                   <a class="dropdown-item" href="{{route('logout')}}">Log out</a>
                 </div>
               </li>
@@ -61,8 +60,8 @@
         Tip 2: you can also add an image using data-image tag
     -->
       <div class="logo">
-        <a href="http://www.creative-tim.com" class="simple-text logo-normal">
-          Creative Tim
+        <a href="#" class="simple-text logo-normal">
+          Solar Panel
         </a>
       </div>
       <div class="sidebar-wrapper">
@@ -75,75 +74,66 @@
           </li>
 
           <li class="nav-item ">
-            <a class="nav-link" data-toggle="collapse" href="#packageDropdown" aria-controls="collapseExample"><i class="material-icons">person</i>
+            <a class="nav-link" data-toggle="collapse" href="#packageDropdown" aria-controls="collapseExample"><i class="material-icons">check_box_outline_blank</i>
               <p>Packages</p>
-              
           </a>
           <div class="collapse" id="packageDropdown">
           <div class="card card-body" style="margin-bottom: 0px; margin-top: 0px;">
-           
-            <a class="nav-link" href="#">
-          
+            <a class="nav-link" href="{{route('add-package')}}">
               <p>Add Packages</p>
             </a>
             <a class="nav-link" href="{{route('list-packages')}}">
-              
-              <p>Package List</p>
+              <p>Packages List</p>
             </a>
-
-            
           </div>
           </div>
           </li>
 
+          <li class="nav-item ">
+            <a class="nav-link" data-toggle="collapse" href="#workerDropdown" aria-controls="collapseExample"><i class="material-icons">person</i>
+              <p>Workers</p>
+          </a>
+          <div class="collapse" id="workerDropdown">
+          <div class="card card-body" style="margin-bottom: 0px; margin-top: 0px;">
+            <a class="nav-link" href="{{route('add-worker')}}">
+              <p>Add Workers</p>
+            </a>
+            <a class="nav-link" href="{{route('list-workers')}}">
+              <p>workers List</p>
+            </a>
+          </div>
+          </div>
+          </li>
 
           <li class="nav-item ">
-            <a class="nav-link" href="./user.html">
+            <a class="nav-link" href="{{route('user-list')}}">
               <i class="material-icons">person</i>
               <p>User Profile</p>
             </a>
           </li>
 
           <li class="nav-item ">
-            <a class="nav-link" href="./tables.html">
-              <i class="material-icons">content_paste</i>
-              <p>Table List</p>
+            <a class="nav-link" href="{{route('view-all-orders')}}">
+              <i class="material-icons">shopping_cart</i>
+              <p>All Orders</p>
             </a>
           </li>
           <li class="nav-item ">
-            <a class="nav-link" href="./typography.html">
-              <i class="material-icons">library_books</i>
-              <p>Typography</p>
+            <a class="nav-link" href="{{route('cleaning-history')}}">
+              <i class="material-icons">rowing</i>
+              <p>Cleaning History</p>
             </a>
           </li>
           <li class="nav-item ">
-            <a class="nav-link" href="./icons.html">
-              <i class="material-icons">bubble_chart</i>
-              <p>Icons</p>
+            <a class="nav-link" href="{{route('payment-history')}}">
+              <i class="material-icons">account_balance_wallet</i>
+              <p>Payment History</p>
             </a>
           </li>
           <li class="nav-item ">
-            <a class="nav-link" href="./map.html">
-              <i class="material-icons">location_ons</i>
-              <p>Maps</p>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="./notifications.html">
-              <i class="material-icons">notifications</i>
-              <p>Notifications</p>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="./rtl.html">
-              <i class="material-icons">language</i>
-              <p>RTL Support</p>
-            </a>
-          </li>
-          <li class="nav-item active-pro ">
-            <a class="nav-link" href="./upgrade.html">
-              <i class="material-icons">unarchive</i>
-              <p>Upgrade to PRO</p>
+            <a class="nav-link" href="{{route('show-time-sloats')}}">
+              <i class="material-icons">alarm</i>
+              <p>Time Slots</p>
             </a>
           </li>
         </ul>
